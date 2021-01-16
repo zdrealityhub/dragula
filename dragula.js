@@ -203,11 +203,13 @@ function dragula (initialContainers, options) {
   }
 
   function start (context) {
-    if (o.createShadowElement !== void 0) {
-      _copy = o.createShadowElement(context.item);      
-      drake.emit('cloned', _copy, context.item, 'copy');
-    } else if (isCopy(context.item, context.source)) {
-      _copy = context.item.cloneNode(true);
+    if (isCopy(context.item, context.source)) {
+      if (o.createShadowElement !== void 0) {
+        _copy = o.createShadowElement(context.item);      
+      } else {
+        _copy = context.item.cloneNode(true);
+      }
+
       drake.emit('cloned', _copy, context.item, 'copy');
     }
 
