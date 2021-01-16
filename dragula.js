@@ -39,6 +39,7 @@ function dragula (initialContainers, options) {
   if (o.direction === void 0) { o.direction = 'vertical'; }
   if (o.ignoreInputTextSelection === void 0) { o.ignoreInputTextSelection = true; }
   if (o.mirrorContainer === void 0) { o.mirrorContainer = doc.body; }
+  if (o.createMirrorElement === void 0) { o.createMirrorElement = cloneItem; }
 
   var drake = emitter({
     containers: o.containers,
@@ -202,7 +203,10 @@ function dragula (initialContainers, options) {
   }
 
   function start (context) {
-    if (isCopy(context.item, context.source)) {
+    if (o.createShadowElement !== void 0) {
+      _copy = o.createShadowElement(context.item);      
+      drake.emit('cloned', _copy, context.item, 'copy');
+    } else if (isCopy(context.item, context.source)) {
       _copy = context.item.cloneNode(true);
       drake.emit('cloned', _copy, context.item, 'copy');
     }
@@ -426,10 +430,8 @@ function dragula (initialContainers, options) {
     if (_mirror) {
       return;
     }
-    var rect = _item.getBoundingClientRect();
-    _mirror = _item.cloneNode(true);
-    _mirror.style.width = getRectWidth(rect) + 'px';
-    _mirror.style.height = getRectHeight(rect) + 'px';
+
+    _mirror = o.createMirrorElement(_item, _offsetX, _offsetY);
     classes.rm(_mirror, 'gu-transit');
     classes.add(_mirror, 'gu-mirror');
     o.mirrorContainer.appendChild(_mirror);
@@ -561,6 +563,13 @@ function getElementBehindPoint (point, x, y) {
 
 function never () { return false; }
 function always () { return true; }
+function cloneItem (item) {
+  var rect = item.getBoundingClientRect();
+  var mirror = item.cloneNode(true);
+  mirror.style.width = getRectWidth(rect) + 'px';
+  mirror.style.height = getRectHeight(rect) + 'px';
+  return mirror;
+}
 function getRectWidth (rect) { return rect.width || (rect.right - rect.left); }
 function getRectHeight (rect) { return rect.height || (rect.bottom - rect.top); }
 function getParent (el) { return el.parentNode === doc ? null : el.parentNode; }
