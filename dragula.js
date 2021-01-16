@@ -39,7 +39,7 @@ function dragula (initialContainers, options) {
   if (o.direction === void 0) { o.direction = 'vertical'; }
   if (o.ignoreInputTextSelection === void 0) { o.ignoreInputTextSelection = true; }
   if (o.mirrorContainer === void 0) { o.mirrorContainer = doc.body; }
-  if (o.mirror === void 0) { o.mirror = cloneItem; }
+  if (o.createMirrorElement === void 0) { o.createMirrorElement = cloneItem; }
 
   var drake = emitter({
     containers: o.containers,
@@ -203,7 +203,10 @@ function dragula (initialContainers, options) {
   }
 
   function start (context) {
-    if (isCopy(context.item, context.source)) {
+    if (o.createShadowElement !== void 0) {
+      _copy = o.createShadowElement(context.item);      
+      drake.emit('cloned', _copy, context.item, 'copy');
+    } else if (isCopy(context.item, context.source)) {
       _copy = context.item.cloneNode(true);
       drake.emit('cloned', _copy, context.item, 'copy');
     }
@@ -427,7 +430,8 @@ function dragula (initialContainers, options) {
     if (_mirror) {
       return;
     }
-    _mirror = o.mirror(_item, _offsetX, _offsetY);
+
+    _mirror = o.createMirrorElement(_item, _offsetX, _offsetY);
     classes.rm(_mirror, 'gu-transit');
     classes.add(_mirror, 'gu-mirror');
     o.mirrorContainer.appendChild(_mirror);
