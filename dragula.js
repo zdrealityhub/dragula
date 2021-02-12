@@ -535,11 +535,21 @@ function whichMouseButton (e) {
   }
 }
 
+function getZoomLevel(el) {
+  var zoomLevel = window.getComputedStyle(el).getPropertyValue('--zoom-level');  
+  if (zoomLevel === '' || isNaN(Number(zoomLevel))) {
+    return 1;
+  }
+
+  return Number(zoomLevel);
+}
+
 function getOffset (el) {
   var rect = el.getBoundingClientRect();
+  var zoomLevel = getZoomLevel(el);
   return {
-    left: rect.left + getScroll('scrollLeft', 'pageXOffset'),
-    top: rect.top + getScroll('scrollTop', 'pageYOffset')
+    left: rect.left * zoomLevel + getScroll('scrollLeft', 'pageXOffset'),
+    top: rect.top * zoomLevel + getScroll('scrollTop', 'pageYOffset')
   };
 }
 
