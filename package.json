@@ -1,6 +1,6 @@
 {
   "name": "@zerodensity/dragula",
-  "version": "3.8.1",
+  "version": "3.9.0",
   "description": "Drag and drop so simple it hurts",
   "main": "dragula.js",
   "scripts": {
